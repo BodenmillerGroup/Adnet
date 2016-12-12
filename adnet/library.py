@@ -4,7 +4,7 @@ __author__ = 'vitoz'
 import scipy.interpolate as interpolate
 import scipy.stats as stats
 import os
-import fcm
+import fcsparser
 import glob
 import pandas as pd
 import numpy as np
@@ -37,17 +37,17 @@ def load_xkl_data(base_folder, sub_folders, row_col_fn_pos, sep='_'):
         dict_file.set_index('row_col',drop=False,inplace=True)
 
         fcs_files_id = [get_rc(fn) for fn in fcs_files]
-        tmpdata = [fcm.loadFCS(fn, transform=None, auto_comp=False) for fn, id in zip(fcs_files, fcs_files_id)]
+        tmpdata = [fcsparser.loadFCS(fn, transform=None, auto_comp=False) for fn, id in zip(fcs_files, fcs_files_id)]
 
         for i,dat in enumerate(tmpdata):
             # make all channel names unique by appending -1,-2 etc
-            cur_channels = make_channels_unique(dat.channels)
-            channels.update(cur_channels)
-            tdat = dat.view()
+            name, channels, data = dat
+            cur_channels = make_channels_unique(channels)
+            tdat = data
             tdat = tdat.byteswap().newbyteorder()
             df = pd.DataFrame(tdat,columns=cur_channels)
             df['experiment'] = cur_folder
-            df['row_col'] = get_rc(dat.name)
+            df['row_col'] = get_rc(name)
             df.set_index('row_col', inplace=True)
             df = df.join(dict_file)
             tmpdata[i] = df

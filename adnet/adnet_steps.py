@@ -28,7 +28,7 @@ def load_all_data(base_folder, sub_folders, row_col_fn_pos, sep):
     return complete_data, channels
 
 
-def _clean_data(complete_data, meta_columns, channels, crap_markers, name_dict):
+def clean_data(complete_data, meta_columns, channels, crap_markers, name_dict):
     """
 
     :param complete_data:
@@ -438,8 +438,9 @@ def plot_trends(marker_target, bin_dat, bin_stat, nbins, plot_pdf, plot_folder):
         p.fig.subplots_adjust(top=.9)
         p.savefig(os.path.join(plot_folder, lib.format_filename('Trends_EGF_overexpression_' + mark + '.png')),
                   figsize=(25, 15))
-        p.savefig(os.path.join(plot_folder, lib.format_filename('Trends_EGF_overexpression_' + mark + '.pdf')),
-                  figsize=(25, 15))
+        if plot_pdf:
+            p.savefig(os.path.join(plot_folder, lib.format_filename('Trends_EGF_overexpression_' + mark + '.pdf')),
+                      figsize=(25, 15))
 
         plt.close()
 

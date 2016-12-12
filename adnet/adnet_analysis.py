@@ -80,7 +80,7 @@ def adnet_analysis(parser):
     complete_data, channels = adnet_steps.load_all_data(base_folder, sub_folders, row_col_fn_pos, sep)
 
     print('Clean the single cell data')
-    complete_data, channels = adnet_steps._clean_data(complete_data, meta_cols_all, channels, crap_markers, name_dict)
+    complete_data, channels = adnet_steps.clean_data(complete_data, meta_cols_all, channels, crap_markers, name_dict)
 
 
     print('channels used')

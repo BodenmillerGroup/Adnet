@@ -127,7 +127,7 @@ class FCSreader(object):
         except AttributeError:
             name = 'InMemoryFile'
         name, unused_ext = os.path.splitext(name)
-        return channels, data
+        return name, channels, data
 
 
     def read_bytes(self, offset, start, stop):
