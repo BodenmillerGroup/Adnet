@@ -26,7 +26,7 @@ def load_xkl_data(base_folder, sub_folders, row_col_fn_pos, sep='_'):
     """
     data_sets = list()
     channels = set()
-    get_rc = lambda fn: os.path.basename(fn).split(sep)[row_col_fn_pos]
+    get_rc = lambda x: os.path.basename(x).split(sep)[row_col_fn_pos]
 
     for cur_folder in sub_folders:
         fcs_files = glob.glob(os.path.join(base_folder, cur_folder, 'gated', '*.fcs'))
