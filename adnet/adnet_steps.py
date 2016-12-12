@@ -12,7 +12,7 @@ import itertools
 __author__ = 'vitoz'
 
 
-def _load_all_data(base_folder, sub_folders, row_col_fn_pos, sep):
+def load_all_data(base_folder, sub_folders, row_col_fn_pos, sep):
     """
     Loads the structured data into the data structure
 
@@ -67,8 +67,8 @@ def _clean_data(complete_data, meta_columns, channels, crap_markers, name_dict):
     return complete_data, channels
 
 
-def _calculate_bin_stats(complete_data, meta_cols_all, meta_cols_bin, channel_target, min_cells,
-                         bin_stat, bin_range, nbins):
+def calculate_bin_stats(complete_data, meta_cols_all, meta_cols_bin, channel_target, min_cells,
+                        bin_stat, bin_range, nbins):
     """
     Calculate the summary statistics over the bins.
 
@@ -158,7 +158,7 @@ def _calculate_bin_stats(complete_data, meta_cols_all, meta_cols_bin, channel_ta
     return bin_dat
 
 
-def _calculate_correlations(bin_dat, complete_data):
+def calculate_correlations(bin_dat, complete_data):
     # calculate correlations stats
     bin_dat[('stats', 'corr_pearson_overall')] = np.nan
     bin_dat[('stats', 'corr_spearman_overall')] = np.nan
@@ -247,7 +247,7 @@ def _find_cutoff(values, neg_values, cutoff_method, cutoff_value, do_plot, plot_
     return vr_tresh
 
 
-def _find_cutoff_from_table(bin_dat, cutoff_stat, cutoff_method, neg_ctrl_names, cutoff_value, do_plot, plot_folder):
+def find_cutoff_from_table(bin_dat, cutoff_stat, cutoff_method, neg_ctrl_names, cutoff_value, do_plot, plot_folder):
     """
 
     :param bin_dat:
@@ -288,7 +288,7 @@ def _find_cutoff_from_table(bin_dat, cutoff_stat, cutoff_method, neg_ctrl_names,
     return bin_dat, vr_tresh
 
 
-def _plot_violins(complete_data, bin_dat, plot_idx, stats, meta_cols_all, bin_range, nbins, min_cells, bin_stat,
+def plot_violins(complete_data, bin_dat, plot_idx, stats, meta_cols_all, bin_range, nbins, min_cells, bin_stat,
                   plot_pdf, plot_folder,  experiment_str='experiment', marker_str='marker',
                   target_str='target', origin_str='origin', timepoint_str='timepoint'):
 
@@ -407,7 +407,7 @@ def _plot_violins(complete_data, bin_dat, plot_idx, stats, meta_cols_all, bin_ra
         f.clear()
         plt.close()
 
-def _plot_trends(marker_target, bin_dat, bin_stat, nbins, plot_pdf, plot_folder):
+def plot_trends(marker_target, bin_dat, bin_stat, nbins, plot_pdf, plot_folder):
 
     uni_mark = set(m for m,t in marker_target)
     plt.ioff()

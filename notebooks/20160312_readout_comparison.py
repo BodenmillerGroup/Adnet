@@ -24,12 +24,12 @@ get_ipython().magic('matplotlib inline')
 
 # Set the file paths
 
-# In[2]:
+# In[17]:
 
 bin_dat_fn = '/mnt/imls-bod/Xiao-Kang/EGF transfection/plots/nbin10_2.5perc_bpr2_median_25_final/t_bindat'
-dremi_fn = '/mnt/imls-bod/Xiao-Kang/EGF transfection/20160314_dremi_values_all_overexpressions.csv'
+dremi_fn = '/home/vitoz/imls-bod/Xiao-Kang/EGF transfection/benchmark/20160314_dremi_values_all_overexpressions.csv'
 name_dict = '/home/vitoz/imls-bod/Xiao-Kang/EGF transfection/name_dict.csv'
-out_folder = '/home/vitoz/imls-bod/Xiao-Kang/EGF transfection/'
+out_folder = '/home/vitoz/imls-bod/Xiao-Kang/EGF transfection/benchmark'
 neg_ctrl_names = ['empty-1','empty-2','GFP-FLAG-1','GFP-FLAG-2']
 
 #neg_ctrl_names = ['empty-1','empty-2']
@@ -40,7 +40,7 @@ crap_names = ['cleaved PARP-cleaved caspase3', 'cyclin B1', 'p-4EBP1', 'p-HH3', 
 
 # Load the binned data file
 
-# In[3]:
+# In[18]:
 
 bin_dat = pd.read_pickle(bin_dat_fn)
 bin_dat.index.get_level_values('target').unique()
@@ -49,7 +49,7 @@ bin_dat.index.get_level_values('target').unique()
 # Prepare the name dict
 # 
 
-# In[4]:
+# In[19]:
 
 name_dict = pd.read_csv(name_dict)
 name_dict = {row['old']: row['new'] for idx, row in name_dict.iterrows()}
@@ -57,7 +57,7 @@ name_dict = {row['old']: row['new'] for idx, row in name_dict.iterrows()}
 
 # Read the DREMI data
 
-# In[5]:
+# In[20]:
 
 dat_dremi = pd.read_csv(dremi_fn, sep=',',index_col=False)
 dat_dremi.head()
@@ -65,19 +65,19 @@ dat_dremi.head()
 
 # make the name dict compatible with the DREMI names (onlz alphanumeric, lower case)
 
-# In[6]:
+# In[ ]:
 
 name_dict_dremi = dict((filter(str.isalnum, oldname.lower()), nicename) for oldname, nicename in name_dict.iteritems())
 
 
-# In[7]:
+# In[ ]:
 
 dat_dremi['target'] = dat_dremi['target'].map(lambda x: name_dict_dremi[x])
 
 
 # Merge the dremi with the bpr2 data
 
-# In[8]:
+# In[ ]:
 
 dat_dremi_stacked = dat_dremi.copy()
 dat_dremi_stacked['origin'] = dat_dremi_stacked['origin'].map(lambda x: x.upper())
@@ -113,14 +113,14 @@ bin_dat[('stats', 'dremi')] = dat_dremi_stacked['dremi'].tolist()
 
 # Calculate the dremi median over the replicates
 
-# In[9]:
+# In[6]:
 
 bin_dat[('stats', 'dremi_median')] = bin_dat[('stats', 'dremi')].groupby(level=['marker', 'origin', 'target', 'timepoint','perturbation']).transform(np.median)
 
 
 # Prepare the negative control filter
 
-# In[10]:
+# In[7]:
 
 bin_dat = bin_dat.loc[bin_dat.index.get_level_values('target').isin(crap_names) == False, :]
 neg_mark_fil = bin_dat.index.get_level_values('marker').isin(neg_ctrl_names)
@@ -136,7 +136,7 @@ neg_mark_fil = bin_dat.index.get_level_values('marker').isin(neg_ctrl_names)
 # ### Start the comparison
 # 
 
-# In[558]:
+# In[8]:
 
 # here some markers could be filtered out
 #filtarget = ['p-RB', 'cyclin B1']
@@ -152,7 +152,7 @@ neg_mark_fil = bin_dat.index.get_level_values('marker').isin(neg_ctrl_names)
 
 # Look only at timepoint 0
 
-# In[559]:
+# In[9]:
 
 #fil = [ x not in filtarget for x in bin_dat.index.get_level_values('target')]
 fil = [ x ==0  for x in bin_dat.index.get_level_values('timepoint')]
@@ -163,7 +163,7 @@ bin_dat.loc[neg_mark_fil == False].index.get_level_values('marker').unique()
 
 # Calculate the cutoffs using the negative control for dremi, bpr2 and spearman
 
-# In[560]:
+# In[10]:
 
 bins = np.arange(0,1,0.025)
 
@@ -182,7 +182,7 @@ print(maxneg_dremi_99)
 print(np.sum(bin_dat.loc[neg_mark_fil == False, ('stats', 'dremi_median')] > maxneg_dremi_99)/3)
 
 
-# In[561]:
+# In[11]:
 
 bin_dat['stats']
 bins = np.arange(0,1,0.025)

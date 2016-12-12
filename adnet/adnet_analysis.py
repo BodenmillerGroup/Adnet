@@ -12,9 +12,7 @@ import ast
 import scipy.stats as scstats
 from configparser2 import ConfigParser
 import itertools
-
-
-from adnet import adnet_steps
+import adnet_steps
 
 __author__ = 'vitoz'
 
@@ -79,7 +77,7 @@ def adnet_analysis(parser):
     Begin script
     """
     print('Start loading')
-    complete_data, channels = adnet_steps._load_all_data(base_folder, sub_folders, row_col_fn_pos, sep)
+    complete_data, channels = adnet_steps.load_all_data(base_folder, sub_folders, row_col_fn_pos, sep)
 
     print('Clean the single cell data')
     complete_data, channels = adnet_steps._clean_data(complete_data, meta_cols_all, channels, crap_markers, name_dict)
@@ -96,11 +94,11 @@ def adnet_analysis(parser):
 
     print('start bin calculations')
 
-    bin_dat = adnet_steps._calculate_bin_stats(complete_data, meta_cols_all, meta_cols_bin, channel_target, min_cells,
-                                   bin_stat, bin_range, nbins)
+    bin_dat = adnet_steps.calculate_bin_stats(complete_data, meta_cols_all, meta_cols_bin, channel_target, min_cells,
+                                              bin_stat, bin_range, nbins)
 
     print('pearson/spearman calculation started')
-    bin_dat = adnet_steps._calculate_correlations(bin_dat, complete_data)
+    bin_dat = adnet_steps.calculate_correlations(bin_dat, complete_data)
 
     print('pearson/spearman calculation finished')
 
@@ -112,43 +110,13 @@ def adnet_analysis(parser):
 
     print('find cutoff')
 
-    bin_dat, vr_tresh  = adnet_steps._find_cutoff_from_table(bin_dat, cutoff_stat, cutoff_method, neg_ctrl_names, cutoff_value, do_plot, plot_folder)
-
-    print('plot violins')
-    if plot_everything:
-        idx = bin_dat.index
-    else:
-        idx = bin_dat[bin_dat['bin_dat_sigfil']].index
-
-    stats = [('stats', 'mean_var_ratio'),
-             ('stats', 'corr_pearson_overall'),
-             ('stats', 'corr_spearman_overall'),
-             ('stats', 'corr_spearman_bin')]
-
+    bin_dat, vr_tresh  = adnet_steps.find_cutoff_from_table(bin_dat, cutoff_stat, cutoff_method, neg_ctrl_names, cutoff_value, do_plot, plot_folder)
 
     """
     save the data
     """
-
-    # save bin data
-    unibins = bin_dat[bin_stat].columns
-
     # get the median replicate
     bin_dat[('stats','is_median_varratio')] =bin_dat[('stats', 'mean_var_ratio')]==bin_dat[('stats', 'median_mean_var_ratio')]
-
-    # filter to only keep the median replicate
-    med_dat = bin_dat.xs(0, level='timepoint').copy()
-    fil = med_dat[('stats','is_median_varratio')]
-    med_dat = med_dat[fil]
-
-    #remove all duplicated levels
-    med_dat.reset_index(['row_col', 'perturbation', 'origin'], inplace=True)
-    med_dat.reset_index('experiment', drop=False,inplace=True)
-    med_dat['chosen_exp'] = med_dat['experiment'].groupby(level=['marker','target']).transform(lambda x: x[0])
-
-    med_dat = med_dat[med_dat['chosen_exp'] == med_dat['experiment']]
-    idx = med_dat.set_index('experiment', append=True).index
-    fn = os.path.join(plot_folder, 'allbinplot_')
 
     # save bindat
     bin_dat.to_pickle(os.path.join(plot_folder, 'bindat'))
@@ -169,7 +137,7 @@ def adnet_analysis(parser):
              ('stats', 'corr_spearman_bin')]
     bin_dat.sort_index(inplace=True)
     if do_plot:
-        adnet_steps._plot_violins(complete_data, bin_dat, idx, stats, meta_cols_all, bin_range, nbins, min_cells, bin_stat,
+        adnet_steps.plot_violins(complete_data, bin_dat, idx, stats, meta_cols_all, bin_range, nbins, min_cells, bin_stat,
                                   plot_pdf, plot_folder,
                                   experiment_str='experiment', marker_str='marker',
                       target_str='target', origin_str='origin', timepoint_str='timepoint')
@@ -191,7 +159,7 @@ def adnet_analysis(parser):
 
 
     if do_plot:
-        adnet_steps._plot_trends()
+        adnet_steps.plot_trends(marker_target, bin_dat, bin_stat, nbins, plot_pdf, plot_folder)
 
     print('trends finished')
 

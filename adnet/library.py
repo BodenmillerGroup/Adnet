@@ -52,7 +52,6 @@ def load_xkl_data(base_folder, sub_folders, row_col_fn_pos, sep='_'):
             df = df.join(dict_file)
             tmpdata[i] = df
         data_sets.append(pd.concat(tmpdata))
-        #samples = [FlowCytometryTools.FCMeasurement(ID=id, datafile=fn) for fn, id in zip(fcs_files, fcs_files_id)]
 
     data = pd.concat(data_sets,axis=0, ignore_index=True)
     return data, channels
