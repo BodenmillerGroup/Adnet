@@ -3,8 +3,15 @@
 
 # # Compare Readouts vs bpR2
 # 
+# by Vito Zanotelli
+# vito.zanotelli@gmail.com
 # 
-# Look at the overlap between using DREMI/Spearman/Pearson as a cutoff
+# Look at the overlap between using DREMI/Spearman correlatio/Pearson correlation as a cutoff.
+# 
+# The bpR2 was calculated using the adnet/Spearman/Pearson correlatio were calulated using the Adnet script.
+# The DREMI value was calculated using the reference matlab GUI implementation from the DREMI paper (Conditional density-based analysis of T cell signaling in single-cell data, Science 2014) modified to write out the results as a .csv file.
+# 
+# 
 
 # In[1]:
 
@@ -24,12 +31,15 @@ get_ipython().magic('matplotlib inline')
 
 # Set the file paths
 
-# In[17]:
+# In[2]:
 
-bin_dat_fn = '/mnt/imls-bod/Xiao-Kang/EGF transfection/plots/nbin10_2.5perc_bpr2_median_25_final/t_bindat'
-dremi_fn = '/home/vitoz/imls-bod/Xiao-Kang/EGF transfection/benchmark/20160314_dremi_values_all_overexpressions.csv'
-name_dict = '/home/vitoz/imls-bod/Xiao-Kang/EGF transfection/name_dict.csv'
-out_folder = '/home/vitoz/imls-bod/Xiao-Kang/EGF transfection/benchmark'
+# the bin_dat pickle file, outputed by the adnet analysis script
+bin_dat_fn = '/mnt/imls-bod/XiaoKangL/EGF transfection/plots/nbin10_2.5perc_bpr2_median_25_final/t_bindat'
+# exported from the matlab dremi gui
+dremi_fn = '/home/vitoz/imls-bod/XiaoKangL/EGF transfection/benchmark/20160314_dremi_values_all_overexpressions.csv'
+# a dictionary with the old and new names
+name_dict = '/home/vitoz/imls-bod/XiaoKangL/EGF transfection/name_dict.csv'
+out_folder = '/home/vitoz/Data/Analysis/XKL'
 neg_ctrl_names = ['empty-1','empty-2','GFP-FLAG-1','GFP-FLAG-2']
 
 #neg_ctrl_names = ['empty-1','empty-2']
@@ -40,7 +50,7 @@ crap_names = ['cleaved PARP-cleaved caspase3', 'cyclin B1', 'p-4EBP1', 'p-HH3', 
 
 # Load the binned data file
 
-# In[18]:
+# In[3]:
 
 bin_dat = pd.read_pickle(bin_dat_fn)
 bin_dat.index.get_level_values('target').unique()
@@ -49,7 +59,7 @@ bin_dat.index.get_level_values('target').unique()
 # Prepare the name dict
 # 
 
-# In[19]:
+# In[4]:
 
 name_dict = pd.read_csv(name_dict)
 name_dict = {row['old']: row['new'] for idx, row in name_dict.iterrows()}
@@ -57,27 +67,27 @@ name_dict = {row['old']: row['new'] for idx, row in name_dict.iterrows()}
 
 # Read the DREMI data
 
-# In[20]:
+# In[5]:
 
 dat_dremi = pd.read_csv(dremi_fn, sep=',',index_col=False)
 dat_dremi.head()
 
 
-# make the name dict compatible with the DREMI names (onlz alphanumeric, lower case)
+# make the name dict compatible with the DREMI names (only alphanumeric, lower case)
 
-# In[ ]:
+# In[6]:
 
 name_dict_dremi = dict((filter(str.isalnum, oldname.lower()), nicename) for oldname, nicename in name_dict.iteritems())
 
 
-# In[ ]:
+# In[7]:
 
 dat_dremi['target'] = dat_dremi['target'].map(lambda x: name_dict_dremi[x])
 
 
-# Merge the dremi with the bpr2 data
+# Merge the dremi data with the bpr2 data
 
-# In[ ]:
+# In[8]:
 
 dat_dremi_stacked = dat_dremi.copy()
 dat_dremi_stacked['origin'] = dat_dremi_stacked['origin'].map(lambda x: x.upper())
@@ -113,14 +123,14 @@ bin_dat[('stats', 'dremi')] = dat_dremi_stacked['dremi'].tolist()
 
 # Calculate the dremi median over the replicates
 
-# In[6]:
+# In[9]:
 
 bin_dat[('stats', 'dremi_median')] = bin_dat[('stats', 'dremi')].groupby(level=['marker', 'origin', 'target', 'timepoint','perturbation']).transform(np.median)
 
 
 # Prepare the negative control filter
 
-# In[7]:
+# In[10]:
 
 bin_dat = bin_dat.loc[bin_dat.index.get_level_values('target').isin(crap_names) == False, :]
 neg_mark_fil = bin_dat.index.get_level_values('marker').isin(neg_ctrl_names)
@@ -128,31 +138,12 @@ neg_mark_fil = bin_dat.index.get_level_values('marker').isin(neg_ctrl_names)
 
 # Filter out the non wanted markers
 
-# In[ ]:
-
-
-
-
 # ### Start the comparison
 # 
 
-# In[8]:
-
-# here some markers could be filtered out
-#filtarget = ['p-RB', 'cyclin B1']
-#filmarker = ['GFP-FLAG-1','GFP-FLAG-2']
-#fil = [ x not in filtarget for x in bin_dat.index.get_level_values('target')]
-#fil = [ x not in filmarker for x in bin_dat.index.get_level_values('marker')]
-#bin_dat = bin_dat.loc[fil]
-#neg_mark_fil = np.array([negmark for negmark, f in zip(neg_mark_fil, fil) if f])
-#neg_mark_fil                
-
-
-
-
 # Look only at timepoint 0
 
-# In[9]:
+# In[11]:
 
 #fil = [ x not in filtarget for x in bin_dat.index.get_level_values('target')]
 fil = [ x ==0  for x in bin_dat.index.get_level_values('timepoint')]
@@ -163,7 +154,7 @@ bin_dat.loc[neg_mark_fil == False].index.get_level_values('marker').unique()
 
 # Calculate the cutoffs using the negative control for dremi, bpr2 and spearman
 
-# In[10]:
+# In[12]:
 
 bins = np.arange(0,1,0.025)
 
@@ -182,7 +173,7 @@ print(maxneg_dremi_99)
 print(np.sum(bin_dat.loc[neg_mark_fil == False, ('stats', 'dremi_median')] > maxneg_dremi_99)/3)
 
 
-# In[11]:
+# In[13]:
 
 bin_dat['stats']
 bins = np.arange(0,1,0.025)
@@ -203,12 +194,12 @@ print(maxneg_bp_99)
 print(np.sum(bin_dat.loc[neg_mark_fil == False, ('stats', 'median_mean_var_ratio')] > maxneg_bp_99)/3)
 
 
-# In[562]:
+# In[14]:
 
 maxneg_bp_99
 
 
-# In[563]:
+# In[15]:
 
 bin_dat['stats']
 bins = np.arange(0,1,0.025)
@@ -228,7 +219,7 @@ print(maxneg_bp_99)
 print(np.sum(bin_dat.loc[neg_mark_fil == False, ('stats', 'median_abs_corr_spearman_overall')] > maxneg_sp_99)/3)
 
 
-# In[564]:
+# In[16]:
 
 bin_dat['stats']
 bins = np.arange(0,1,0.025)
@@ -248,7 +239,7 @@ print(maxneg_pc_99)
 print(np.sum(bin_dat.loc[neg_mark_fil == False, ('stats', 'median_abs_corr_pearson_overall')] > maxneg_sp_99)/3)
 
 
-# In[565]:
+# In[17]:
 
 #fil = bin_dat[('stats', 'dremi_median')] > 0.24
 #fildat = bin_dat.loc[(fil) & (neg_mark_fil)]
@@ -259,7 +250,7 @@ print(np.sum(bin_dat.loc[neg_mark_fil == False, ('stats', 'median_abs_corr_pears
 
 # Compare the overlap of hits between 
 
-# In[566]:
+# In[18]:
 
 fil = bin_dat[('stats', 'dremi_median')] > maxneg_dremi_99
 fildat = bin_dat.loc[(fil) & (neg_mark_fil == False)]
@@ -290,77 +281,81 @@ hits_pc = set('_'.join([m, t, str(tp)]) for m, t, tp in
 
 # Look at the different hits as a venn diagramm
 
-# In[580]:
+# In[19]:
 
 
 venn3([hits_bp,hits_sp,hits_dremi],set_labels=['bp-R2', 'Spearman', 'DREMI'])
 
-plt.savefig(os.path.join(out_folder,'20160429_readout_comparison_venn_wocc.pdf'))
+#plt.savefig(os.path.join(out_folder,'20160429_readout_comparison_venn_wocc.pdf'))
 
 
-# In[568]:
+# In[20]:
 
 venn3([hits_bp,hits_pc,hits_dremi],set_labels=['bp-R2', 'Pearson', 'DREMI'])
 
 
-# In[569]:
+# ## Look how exactly the hits differ
+
+# In[21]:
 
 hits_bp
 
 
-# In[570]:
+# In[22]:
 
 hits_bp.difference(hits_dremi)
 
 
-# In[571]:
+# In[23]:
 
 
 
 hits_bp.difference(hits_dremi.union(hits_sp))
 
 
-# In[572]:
+# In[24]:
 
 hits_bp.difference(hits_sp)
 
 
-# In[573]:
+# In[25]:
 
 hits_dremi.difference(hits_bp)
 
 
-# In[574]:
+# In[26]:
 
 hits_dremi.difference(hits_bp.union(hits_sp))
 
 
-# In[575]:
+# In[27]:
 
 hits_dremi.difference(hits_sp)
 
 
-# In[576]:
+# In[28]:
 
 hits_sp.difference(hits_bp)
 
 
-# In[577]:
+# In[29]:
 
 hits_sp.difference(hits_bp.union(hits_dremi))
 
 
-# In[578]:
+# In[30]:
 
 hits_bp.union(hits_sp).difference(hits_dremi)
 
 
-# In[582]:
+# In[31]:
 
 hits_bp.intersection(hits_dremi).difference(hits_sp)
 
 
-# In[579]:
+# ## Make a table of the hits and save it 
+
+# In[32]:
 
 hit_dict = dict()
 
@@ -378,12 +373,12 @@ hit_tab = hit_tab.sort_values(by=['is_bp','is_dremi', 'is_sp'],ascending=False)
 hit_tab.to_csv(os.path.join(out_folder,'20160429_readout_comparison_vsemptygfp_woCC.csv'),index=False)
 
 
-# In[370]:
+# In[33]:
 
 hit_tab
 
 
-# In[371]:
+# In[34]:
 
 #bin_dat.plot(kind='scatter', x=('stats', 'mean_var_ratio'), y=('stats', 'dremi'))
 
@@ -418,7 +413,7 @@ ycol = ('stats', 'dremi')
 draw_tooltip_scatter(bin_dat,xcol, ycol )
 
 
-# In[37]:
+# In[35]:
 
 #bin_dat.plot(kind='scatter', x=('stats', 'median_mean_var_ratio'), y=('stats', 'median_abs_corr_spearman_overall'))
 
@@ -427,7 +422,7 @@ ycol = ('stats', 'corr_spearman_overall')
 draw_tooltip_scatter(bin_dat,xcol, ycol )
 
 
-# In[38]:
+# In[36]:
 
 #bin_dat.plot(kind='scatter', x=('stats', 'median_mean_var_ratio'), y=('stats', 'median_abs_corr_spearman_overall'))
 
@@ -438,38 +433,33 @@ draw_tooltip_scatter(bin_dat,xcol, ycol )
 
 # Compare different bins
 
-# In[220]:
+# In[37]:
 
 bin_dat.plot(kind='scatter', x=('stats', 'mean_var_ratio'), y=('stats', 'corr_spearman_overall'))
 
 
-# In[221]:
+# In[38]:
 
 fil = (bin_dat[('stats', 'median_mean_var_ratio')] < 0.5) &     (bin_dat[('stats', 'median_mean_var_ratio')] > 0.4) & (bin_dat[('stats', 'median_abs_corr_spearman_overall')] <0.4)
     
 bin_dat.loc[fil]
 
 
-# In[471]:
+# In[39]:
 
 bin_dat.xs('p-GSK3-Beta', level='target').xs('MAP2K6', level='marker')['stats'].columns
 
 
-# In[470]:
+# In[40]:
 
 np.median(1-(bin_dat.xs('p-GSK3-Beta', level='target').xs('MAP2K6', level='marker')['fit_var']/
    bin_dat.xs('p-GSK3-Beta', level='target').xs('MAP2K6', level='marker')[u'overall_var']), axis=1)
 
 
-# In[587]:
+# In[41]:
 
 print(bin_dat.index.get_level_values('target').unique())
 print(bin_dat.index.get_level_values('marker').unique())
-
-
-# In[589]:
-
-bin_dat.xs('MAPK1', level='marker').xs('p-ERK1-2', level='target')['stats']
 
 
 # In[ ]:
