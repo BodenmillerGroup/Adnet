@@ -1,0 +1,7 @@
+row,column,marker,perturbation,timepoint,replicate,readout
+B,2,CRAF,GFP-N,0,1,GFP
+C,2,CRAF,GFP-N,15,1,GFP
+D,2,CRAF,FLAG-C,0,1,FLAG
+E,2,CRAF,FLAG-C,15,1,FLAG
+F,2,CRAF,FLAG-N,0,1,FLAG
+G,2,CRAF,FLAG-N,15,1,FLAG

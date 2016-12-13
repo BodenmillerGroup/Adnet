@@ -1,0 +1,4 @@
+row,column,marker,perturbation,timepoint,replicate
+B,1,FLAG-GFP,none,0,3
+B,2,KRAS-G12V,none,0,3
+B,3,MEK1DD,none,0,3
