@@ -14,7 +14,7 @@ __author__ = 'vitoz'
 
 def load_all_data(base_folder, sub_folders, row_col_fn_pos, sep):
     """
-    Loads the structured data into the data structure
+    Loads the structured data folder structure into the program
 
     :param base_folder: name of the base folder
     :param sub_folders: name of the sub folder
@@ -30,13 +30,13 @@ def load_all_data(base_folder, sub_folders, row_col_fn_pos, sep):
 
 def clean_data(complete_data, meta_columns, channels, crap_markers, name_dict):
     """
-
-    :param complete_data:
-    :param meta_columns:
-    :param channels:
-    :param crap_markers:
-    :param name_dict:
-    :return: complete_data, channels
+    Removes the not wanted channels and renames channels according to the naming dictionary - if provided.
+    :param complete_data: all data
+    :param meta_columns: columns to be used as metadata
+    :param channels: channel names
+    :param crap_markers: not wanted markers
+    :param name_dict: filename of the naming dictionary
+    :return:
     """
     # Remove the not wanted markers
     channels = set(channels)
@@ -67,19 +67,23 @@ def clean_data(complete_data, meta_columns, channels, crap_markers, name_dict):
     return complete_data, channels
 
 
-def calculate_bin_stats(complete_data, meta_cols_all, meta_cols_bin, channel_target, min_cells,
-                        bin_stat, bin_range, nbins):
+def calculate_bin_stats(complete_data, meta_cols_all, meta_cols_bin, channel_target='GFP', min_cells=20,
+                        bin_stat='median', bin_range=None, nbins=10):
     """
-    Calculate the summary statistics over the bins.
+    Calculate the summary statistics over the bins. The bp-R2 will be calculated based on this summary statistics.
 
-    :param complete_data:
-    :param meta_cols_all:
-    :param meta_cols_bin:
-    :param channel_target:
-    :param min_cells:
-    :param bin_stat:
-    :return:
+    :param complete_data: the single cell data
+    :param meta_cols_all: metadata columns to be used
+    :param meta_cols_bin: metadata columns to be used for binning
+    :param channel_target: channel to be used as readout and thus used for the x-axis during the binning
+    :param min_cells: minimum number of cells per bin in order to consider the bin for analysis
+    :param bin_stat: statistic to be used for the bin 'average': either median (standard) or mean
+    :param bin_range: percentile used for binning, e.g. [2.5, 97.5] for 95 percentile
+    :param nbins: number of bins to be used
+    :return: bin_dat: the output structure
     """
+    if bin_range is None:
+        bin_range=[2.5, 9.75]
     # group by file
     grouped = complete_data.groupby(level=meta_cols_all)
 
@@ -159,6 +163,12 @@ def calculate_bin_stats(complete_data, meta_cols_all, meta_cols_bin, channel_tar
 
 
 def calculate_correlations(bin_dat, complete_data):
+    """
+    Calculates single cell correlations and saves it in the bin_dat structure
+    :param bin_dat:
+    :param complete_data:
+    :return: bin_dat
+    """
     # calculate correlations stats
     bin_dat[('stats', 'corr_pearson_overall')] = np.nan
     bin_dat[('stats', 'corr_spearman_overall')] = np.nan
@@ -192,12 +202,14 @@ def calculate_correlations(bin_dat, complete_data):
 
 def _find_cutoff(values, neg_values, cutoff_method, cutoff_value, do_plot, plot_folder):
     """
-
-    :param values:
-    :param neg_values:
-    :param cutoff_method:
-    :param cutoff_value:
-    :return:
+    Finds the cutoff based on the method chosen
+    :param values: a list of values
+    :param neg_values: a list of values of the negative population
+    :param cutoff_method: 'empiric_FDR', 'gamma_FDR', 'gamma_p'
+    :param cutoff_value: numeric: false positive rate accepted
+    :param do_plot: True/False if plot should be run
+    :param plot_folder: string, output folder name
+    :return: threshold
     """
 
     # find the cut-off for 0% false positive rate
@@ -249,12 +261,15 @@ def _find_cutoff(values, neg_values, cutoff_method, cutoff_value, do_plot, plot_
 
 def find_cutoff_from_table(bin_dat, cutoff_stat, cutoff_method, neg_ctrl_names, cutoff_value, do_plot, plot_folder):
     """
-
-    :param bin_dat:
-    :param cutoff_stat:
-    :param cutoff_method:
-    :param cutoff_value:
-    :return:
+    Finds the cutoff based on a column of the bin_dat table
+    :param bin_dat: the  bindat file structure
+    :param cutoff_stat: name of the cutoff statistics to be used
+    :param cutoff_method: 'provided', 'empiric_FDR', 'gamma_FDR', 'gamma_p'
+    :param neg_ctrl_names: name of the negative control markers
+    :param cutoff_value: FDR rate accepted, p_value accepted or cutoff provided
+    :param do_plot:  True/False if plot should be run
+    :param plot_folder: string, output folder name
+    :return: bin_dat with significant value, vr_tresh: numeric threshold
     """
     neg_mark_fil = bin_dat.index.get_level_values('marker').isin(neg_ctrl_names)
 
@@ -291,16 +306,25 @@ def find_cutoff_from_table(bin_dat, cutoff_stat, cutoff_method, neg_ctrl_names, 
 def plot_violins(complete_data, bin_dat, plot_idx, stats, meta_cols_all, bin_range, nbins, min_cells, bin_stat,
                   plot_pdf, plot_folder,  experiment_str='experiment', marker_str='marker',
                   target_str='target', origin_str='origin', timepoint_str='timepoint'):
-
-
     """
+    Plots the violin plots of the binned data.
 
     :param complete_data:
     :param bin_dat:
     :param plot_idx:
+    :param stats:
+    :param meta_cols_all:
+    :param bin_range:
+    :param nbins:
+    :param min_cells:
+    :param bin_stat:
+    :param plot_pdf:
+    :param plot_folder:
+    :param experiment_str:
     :param marker_str:
     :param target_str:
     :param origin_str:
+    :param timepoint_str:
     :return:
     """
 
@@ -408,6 +432,17 @@ def plot_violins(complete_data, bin_dat, plot_idx, stats, meta_cols_all, bin_ran
         plt.close()
 
 def plot_trends(marker_target, bin_dat, bin_stat, nbins, plot_pdf, plot_folder):
+    """
+    Plots the trends
+
+    :param marker_target:
+    :param bin_dat:
+    :param bin_stat:
+    :param nbins:
+    :param plot_pdf:
+    :param plot_folder:
+    :return:
+    """
 
     uni_mark = set(m for m,t in marker_target)
     plt.ioff()

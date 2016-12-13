@@ -115,16 +115,17 @@ def adnet_analysis(parser):
     """
     save the data
     """
+    print('save the data')
     # get the median replicate
     bin_dat[('stats','is_median_varratio')] =bin_dat[('stats', 'mean_var_ratio')]==bin_dat[('stats', 'median_mean_var_ratio')]
 
     # save bindat
     bin_dat.to_pickle(os.path.join(plot_folder, 'bindat'))
-    bin_dat.to_csv(os.path.join(plot_folder, 'bindat.csv'))
+    #bin_dat.to_csv(os.path.join(plot_folder, 'bindat.csv'))
     # save completedat
     complete_data.to_pickle(os.path.join(plot_folder, 'complete_dat'))
-    complete_data.to_csv(os.path.join(plot_folder, 'complete_dat.csv'))
-    print('Plot Violins')
+    #complete_data.to_csv(os.path.join(plot_folder, 'complete_dat.csv'))
+    print('plot Violins')
 
     if plot_everything:
         idx = bin_dat.index
