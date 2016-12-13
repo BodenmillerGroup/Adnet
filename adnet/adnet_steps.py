@@ -5,8 +5,9 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import library as lib
 import scipy.stats as scstats
+
+from adnet import library as lib
 
 import itertools
 __author__ = 'vitoz'

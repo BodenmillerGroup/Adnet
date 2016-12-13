@@ -2,17 +2,11 @@
 from __future__ import division
 import argparse
 import os
-import sys
-import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-import library as lib
 import ast
-import scipy.stats as scstats
 from configparser2 import ConfigParser
-import itertools
-import adnet_steps
+
+from adnet import adnet_steps
+from adnet import library as lib
 
 __author__ = 'vitoz'
 
