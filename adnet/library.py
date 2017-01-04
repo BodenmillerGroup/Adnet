@@ -4,7 +4,7 @@ __author__ = 'vitoz'
 import scipy.interpolate as interpolate
 import scipy.stats as stats
 import os
-import fcsparser
+import adnet.external.fcsparser as fcsparser
 import glob
 import pandas as pd
 import numpy as np

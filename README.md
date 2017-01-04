@@ -44,7 +44,7 @@ The overall folder structure should be as follows:
         old, new
         old: column name as used in the .fcs file
         new: renamed column name as should be used in the analysis plots. Non ASCII characters can give problems.
-   
+   gi
 
 - config.ini:
     a configuration file with all the parameters used for the analysis. Please look at the specifications in the example
@@ -102,14 +102,23 @@ Runs the bpR2 analysis for the comparison of differentially tagged overexpressio
 
 
 
+# References
+This repository uses code from the following projects:
+- Matplotlib: John D. Hunter. Matplotlib: A 2D Graphics Environment, Computing in Science & Engineering, 9, 90-95 (2007), DOI:10.1109/MCSE.2007.55
+
+- Seaborn: https://github.com/mwaskom/seaborn
+
+- Scipy: Jones E, Oliphant E, Peterson P, et al. SciPy: Open Source Scientific Tools for Python, 2001-, http://www.scipy.org/ [Online; accessed 2017-01-04].
+
+- Numpy: Stéfan van der Walt, S. Chris Colbert and Gaël Varoquaux. The NumPy Array: A Structure for Efficient Numerical Computation, Computing in Science & Engineering, 13, 22-30 (2011), DOI:10.1109/MCSE.2011.37
+
+- Pandas: Wes McKinney. Data Structures for Statistical Computing in Python, Proceedings of the 9th Python in Science Conference, 51-56 (2010)
 
 
+- Ipython: Fernando Pérez and Brian E. Granger. IPython: A System for Interactive Scientific Computing, Computing in Science & Engineering, 9, 21-29 (2007), DOI:10.1109/MCSE.2007.53
 
 
-
-
-
-
+- Fcm: https://pythonhosted.org/fcm/
 
 
 
