@@ -467,6 +467,7 @@ def plot_trends(marker_target, bin_dat, bin_stat, nbins, plot_pdf, plot_folder):
 
         p = sns.FacetGrid(plot_dat, row='experiment', col='timepoint', hue='target',
                           margin_titles=True, sharex=False, sharey=True, xlim=(0.5, nbins + 0.5), ylim=(-0.05, 1.05))
+        
         p.map(plt.scatter, 'bin', rescaled_name)
         p.map(plt.plot, 'bin', rescaled_name)
         p.add_legend()
