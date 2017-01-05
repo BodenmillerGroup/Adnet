@@ -6,7 +6,7 @@ Xiao-Kang Lun, Vito RT Zanotelli, James D Wade, Denis Schapiro, Marco Tognetti, 
 
 # Installation:
 The package can be installed using the python package manager pip. Using a virtual environment is highly recommended.
-The code is compatible with Python2. The installation was tested on Ubuntu 14.04, but is expected to work
+The code is compatible with Python2.7. The installation was tested on Ubuntu 14.04, but is expected to work
 as well on other installations.
 
 1) clone the github repsitory:
