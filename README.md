@@ -90,16 +90,67 @@ python -m adnet.adnet_analysis /pathto/Adnet/example/config_xxx.ini
 ```
 
 ### Main analysis
-Runs the bpR2 analysis for the 20 overexpressions. Because of data storage reasons only 2 replicates of 1 overession group is included
+Runs the bpR2 analysis for the 20 overexpressions. Because of data storage reasons only 2 replicates of 1 ovexpression group is included
 in this repository. However the other folders are already prepared and the FCS files from the data repository
 simply need to be copied in. To activate the other folders just uncomment the folder section.
+
+### Main analysis allvsall
+Calculates bpR2 and correlation for all pairwise marker combinations. The generated data can be used for correlation heatmaps (see Notebooks). Not all data included.
 
 ### Mutations analysis
 Runs the bpR2 analysis for the mutation data. All data included.
 
-### Tag analysis
-Runs the bpR2 analysis for the comparison of differentially tagged overexpressions, i.e. Flag-N, Flag-C, GFP-N, GFP-C
+### Mutations analysis allvsall
+Calculates bpR2 and correlation for all pairwise marker combinations. The generated data can be used for correlation heatmaps (see Notebooks). All data included.
 
+### Tag analysis
+Runs the bpR2 analysis for the comparison of differentially tagged overexpressions, i.e. Flag-N, Flag-C, GFP-N, GFP-C. All data included.
+
+
+# Figure reproduction
+
+
+The figures from the paper can be reproduced with the following code:
+
+## Figures
+- Fig 1: no actual data shown
+- Fig 2:
+    a) via cytobank
+    b) from Example 'Mutation analysis', plots 'Trends_EGF_overexpression_marker'
+    c) via cytobank
+    d) via cytobank
+    e) & f) from notebooks/correlation_heatmaps.ipynb
+    g) & h) no code provided
+    
+- Fig 3: no code provided
+- Fig 4:
+    a)-h) from example 'Main analysis', plots 'EGF_overexpression_...', 'Trends_EGF_overexpression_marker_BinsoverTP'
+    i) from notebooks/kinetic_analysis.ipynb
+    
+ 
+- Table 2: from notebooks/SIGNOR_analysis.ipynb
+
+## Supplemenatry Figures
+- Sup. Figure 3:
+    e) from notebooks/tag_comparison.ipynb
+- Sup. Figure 9:
+    b)-e) from example 'Mutation analysis' plots
+    
+- Sup. Figure 10:
+    c) from example 'Main analysis', plot 'cutoff'
+    
+- Sup. Figure 11:
+    a) from noteboooks/readout_comparison.ipynb
+    
+- Sup. Figure 13:
+    a) & b) from notebooks/supplementary_fig13_heatmaps.ipynb
+    
+- Sup. Figure 14:
+    from notebooks/kinetic_analysis.ipynb
+    
+## Supplementary Files    
+- Supplementary File 1, 2, 4: from example 'Main analysis'
+- Supplementary File 3: from notebooks/correlation_heatmaps.ipynb
 
 
 # References
