@@ -10,6 +10,9 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import scipy.cluster.hierarchy as scclust
+# Force matplotlib to not use any Xwindows backend.
+
 
 import string
 
@@ -576,4 +579,60 @@ def simulate_perfect_distribution(n, dist_type=None):
         raise NameError('No valid distribution type!')
 
     return x, y
+    
+    
+def plot_clustermaps(data, clusterstats, plotfolder, ref=None, pdf=False):
+    """
+    Plots correlation heatmaps from the bin_dat. The data is grouped according to ['marker', 'perturbation', 'timepoint'] levels that
+    need to be present. If multiple replicates are present, the median over the replicates is taken. If a reference condition is provided, 
+    a version of the heatmap with the reference substracted will be printed.
+    :param data: a bin_dat table
+    :param clusterstats: a list of summary statistic names to plot
+    :param plotfolder: the name of the output folder
+    :param ref: the name of the reference condition (e.g. GFP-FLAG) that will be substracted if provided.
+    :param pdf: should pdfs be printed (default png)
+    :return:
+    """
+    grp_levels = ['marker', 'perturbation', 'timepoint']
+    plt.ioff()
+    
+    for idx, group_bin_dat in data.groupby(level=grp_levels):
+        group_bin_dat = group_bin_dat['stats'].groupby(level=['origin','target']).median()
+
+        if ref is not None:
+            ref_idx = list(idx)
+            ref_idx[0] =  ref
+            ref_group_bin_dat = data.xs(ref_idx,level=grp_levels)
+            ref_group_bin_dat = ref_group_bin_dat['stats'].groupby(level=['origin','target']).median()
+        for stat in clusterstats:
+            clustermat = group_bin_dat[stat].unstack().copy()
+            clustermat = clustermat.fillna(clustermat.max().max())
+            r_clust = scclust.linkage(1-np.abs(clustermat), method='ward', metric='euclidean')
+            s = sns.clustermap(clustermat, row_cluster=True, col_cluster=True, col_linkage=r_clust, row_linkage=r_clust, center=0)
+            plt.setp(s.ax_heatmap.get_yticklabels(), rotation=0)
+            plt.setp(s.ax_heatmap.get_xticklabels(), rotation=90)  
+            plt.subplots_adjust(bottom=0.3, right=0.7, left=0.1)
+            plt.suptitle('%s overexpression %s: %s heatmap' %(idx[0], str(idx[2]), stat))
+            plt.savefig(os.path.join(plotfolder, 'clustermap_%s_overexpression_%s_tp_%02d_heatmap.png' %(idx[0], stat, idx[2])))
+            if pdf:
+                plt.savefig(os.path.join(plotfolder, 'clustermap_%s_overexpression_%s_tp_%02d_heatmap.pdf' %(idx[0], stat, idx[2])))
+            plt.close()
+
+            if ref is not None:
+                clustermat = np.arctanh(group_bin_dat[stat].unstack())-np.arctanh(ref_group_bin_dat[stat].unstack())
+                plotmat = clustermat.copy().fillna(0)
+                clustermat = clustermat.fillna(clustermat.max().max())
+                r_clust = scclust.linkage(clustermat, method='ward', metric='euclidean')
+
+                s = sns.clustermap(plotmat, vmin= -0.8, vmax=0.8,row_cluster=True, col_cluster=True, col_linkage=r_clust, row_linkage=r_clust, center=0,)
+                plt.setp(s.ax_heatmap.get_yticklabels(), rotation=0)
+                plt.setp(s.ax_heatmap.get_xticklabels(), rotation=90)
+                plt.suptitle('%s overexpression tp %s: %s heatmap' %(idx[0], str(idx[2]), stat))
+                plt.subplots_adjust(bottom=0.3, right=0.7, left=0.1)
+                s.ax_heatmap.set(xlabel='', ylabel='')
+                plt.savefig(os.path.join(plotfolder, 'clustermap_%s_overexpression_%s_tp_%02d_heatmap_minusref_fischer.png' %(idx[0], stat, (idx[2]))))
+                if pdf:
+                 plt.savefig(os.path.join(plotfolder, 'clustermap_%s_overexpression_%s_tp_%02d_heatmap_minusref_fischer.pdf' %(idx[0], stat, (idx[2]))))
+                plt.close()
+        
 

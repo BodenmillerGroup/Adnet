@@ -1,5 +1,7 @@
 #!/usr/bin/python
 from __future__ import division
+import matplotlib
+matplotlib.use('Agg')
 import argparse
 import os
 import ast
@@ -7,6 +9,7 @@ from configparser2 import ConfigParser
 
 from adnet import adnet_steps
 from adnet import library as lib
+
 
 __author__ = 'vitoz'
 
