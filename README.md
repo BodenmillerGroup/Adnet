@@ -115,38 +115,38 @@ The figures from the paper can be reproduced with the following code:
 ## Figures
 - Fig 1: no actual data shown
 - Fig 2:
-    a) via cytobank
-    b) from Example 'Mutation analysis', plots 'Trends_EGF_overexpression_marker'
-    c) via cytobank
-    d) via cytobank
-    e) & f) from notebooks/correlation_heatmaps.ipynb
-    g) & h) no code provided
+    - a) via cytobank
+    - b) from Example 'Mutation analysis', plots 'Trends_EGF_overexpression_marker'
+    - c) via cytobank
+    - d) via cytobank
+    - e) & f) from notebooks/correlation_heatmaps.ipynb
+    - g) & h) no code provided
     
 - Fig 3: no code provided
 - Fig 4:
-    a)-h) from example 'Main analysis', plots 'EGF_overexpression_...', 'Trends_EGF_overexpression_marker_BinsoverTP'
-    i) from notebooks/kinetic_analysis.ipynb
+    - a)-h) from example 'Main analysis', plots 'EGF_overexpression_...', 'Trends_EGF_overexpression_marker_BinsoverTP'
+    - i) from notebooks/kinetic_analysis.ipynb
     
  
 - Table 2: from notebooks/SIGNOR_analysis.ipynb
 
 ## Supplemenatry Figures
 - Sup. Figure 3:
-    e) from notebooks/tag_comparison.ipynb
+    - e) from notebooks/tag_comparison.ipynb
 - Sup. Figure 9:
-    b)-e) from example 'Mutation analysis' plots
+    - b)-e) from example 'Mutation analysis' plots
     
 - Sup. Figure 10:
-    c) from example 'Main analysis', plot 'cutoff'
+    - c) from example 'Main analysis', plot 'cutoff'
     
 - Sup. Figure 11:
-    a) from noteboooks/readout_comparison.ipynb
+    - a) from noteboooks/readout_comparison.ipynb
     
 - Sup. Figure 13:
-    a) & b) from notebooks/supplementary_fig13_heatmaps.ipynb
+    - a) & b) from notebooks/supplementary_fig13_heatmaps.ipynb
     
 - Sup. Figure 14:
-    from notebooks/kinetic_analysis.ipynb
+    -from notebooks/kinetic_analysis.ipynb
     
 ## Supplementary Files    
 - Supplementary File 1, 2, 4: from example 'Main analysis'
