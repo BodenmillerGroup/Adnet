@@ -83,10 +83,10 @@ paper.
 
 **Please change the paths in the config ini file to match the current repository location!**
 
-Afterwards the analysis can be run as follows:
+Afterwards the analysis can be run as follows (assuming you are in the example folder, otherwise adapt the path):
 
 ```
-python -m adnet.adnet_analysis /pathto/Adnet/example/config_xxx.ini
+python -m adnet.adnet_analysis ./config_xxx.ini
 ```
 
 ### Main analysis
