@@ -468,8 +468,8 @@ def plot_trends(marker_target, bin_dat, bin_stat, nbins, plot_pdf, plot_folder):
         p = sns.FacetGrid(plot_dat, row='experiment', col='timepoint', hue='target',
                           margin_titles=True, sharex=False, sharey=True, xlim=(0.5, nbins + 0.5), ylim=(-0.05, 1.05))
         
-        p.map(plt.scatter, 'bin', rescaled_name)
-        p.map(plt.plot, 'bin', rescaled_name)
+        #p.map(plt.scatter, 'bin', rescaled_name)
+        p.map(plt.plot, 'bin', rescaled_name,marker='.')
         p.add_legend()
         p.fig.suptitle('Overexpression: ' + mark)
         p.fig.subplots_adjust(top=.9)
@@ -486,8 +486,8 @@ def plot_trends(marker_target, bin_dat, bin_stat, nbins, plot_pdf, plot_folder):
                           margin_titles=True, sharex=False, sharey=True,
                           palette=sns.cubehelix_palette(nTP + 1)[1:nTP + 1],
                           xlim=(0.5, nbins + 0.5), ylim=(-.05, 1.05 * plot_dat[bin_stat].max()))
-        p.map(plt.plot, 'bin', summary_name)
-        p.map(plt.scatter, 'bin', summary_name)
+        p.map(plt.plot, 'bin', summary_name, marker='.')
+        #p.map(plt.scatter, 'bin', summary_name)
         p.add_legend()
         plt.suptitle('Overexpression: ' + mark)
         p.fig.subplots_adjust(top=.9)
