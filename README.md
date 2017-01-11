@@ -5,9 +5,10 @@ This repository contains the analysis scripts used for the paper:
 Xiao-Kang Lun, Vito RT Zanotelli, James D Wade, Denis Schapiro, Marco Tognetti, Nadine Dobberstein & Bernd Bodenmiller
 
 # Installation:
-The package can be installed using the python package manager pip. Using a virtual environment is highly recommended.
-The code is compatible with Python2.7. The installation was tested on Ubuntu 14.04, but is expected to work
-as well on other installations.
+The package can be installed using the python package manager pip. Using a virtual environment or an environment manager such
+as Anaconda is highly recommended.
+The code is compatible with Python2.7. The installation was mainly tested on Ubuntu 14.04, but was also found to work on OSX
+and Windows 7.
 
 1) clone the github repsitory:
 `git clone https://github.com/BodenmillerGroup/Adnet.git`
@@ -44,7 +45,6 @@ The overall folder structure should be as follows:
         old, new
         old: column name as used in the .fcs file
         new: renamed column name as should be used in the analysis plots. Non ASCII characters can give problems.
-   gi
 
 - config.ini:
     a configuration file with all the parameters used for the analysis. Please look at the specifications in the example
@@ -78,10 +78,11 @@ Depending on the settings of the config.ini file, the following output will be g
 
 # Examples
 
-In the root directory is an 'example' folder which contains configuration files for 3 example analyses from the
+In the root directory is an 'example' folder which contains configuration files for the 3 analyses from the
 paper. 
 
-**Please change the paths in the config ini file to match the current repository location!**
+**Please change the paths in the config ini file to match the current repository location or make sure you are in the
+example folder.**
 
 Afterwards the analysis can be run as follows (assuming you are in the example folder, otherwise adapt the path):
 
