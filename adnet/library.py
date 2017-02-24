@@ -634,5 +634,24 @@ def plot_clustermaps(data, clusterstats, plotfolder, ref=None, pdf=False):
                 if pdf:
                  plt.savefig(os.path.join(plotfolder, 'clustermap_%s_overexpression_%s_tp_%02d_heatmap_minusref_fischer.pdf' %(idx[0], stat, (idx[2]))))
                 plt.close()
-        
 
+def bindat_2_simple_tables(bindat):
+    """
+    Converts the bindat table into two simple tables without hierarchical indexes. This tables can be easily exported e.g. for R.
+    :param bindat: the bindat table as exported by the adnet analysis script
+    :return (data_perbin, data_persample): exports a list with a table that has data per bin and one that has the data per sample.
+    """
+
+    dat_perbin = bindat[['counts', 'fit_var','median', 'overall_var', 'var_ratio']].stack(level=1)
+    dat_persample = bindat.drop(['counts', 'fit_var','median', 'overall_var', 'var_ratio'], axis=1, level=0)
+
+    # In some statistics the second index level seems to be empty - fix that:
+    def fix_col(col):
+        if col[1] == '':
+            return col[0]
+        else:
+            return col[1]
+
+    dat_persample.columns = [fix_col(c) for c in dat_persample.columns]
+
+    return (dat_perbin, dat_persample)
