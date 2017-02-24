@@ -12,7 +12,7 @@ def convert_2_csv(folder, fn_bindat, fn_completedat, bindat_only=False):
     dat_perbin.to_csv(os.path.join(folder, 'bindat_perbin.csv'))
     dat_persample.to_csv(os.path.join(folder, 'bindat_persample.csv'))
     if bindat_only == False:
-        complete_dat = pd.read_pickle(os.path.join(fn_completedat))
+        complete_dat = pd.read_pickle(os.path.join(folder, fn_completedat))
         complete_dat.to_csv(os.path.join(folder, 'complete_dat.csv'))
 
 if __name__ == '__main__':
